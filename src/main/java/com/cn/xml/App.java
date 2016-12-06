@@ -6,8 +6,11 @@ package com.cn.xml;
  */
 public class App 
 {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         FQXmlElement fqe = new FQXmlElement();
-    }
 
+        //final String xmlPath = "C:\\data\\xml\\cn_rss_raw-news.ap.politics-20161206.0008.13.xml";
+        final String xmlPath = "C:\\data\\xml\\a.xml";
+        CnDomXmlParser dxp = new CnDomXmlParser(xmlPath);
+    }
 }
