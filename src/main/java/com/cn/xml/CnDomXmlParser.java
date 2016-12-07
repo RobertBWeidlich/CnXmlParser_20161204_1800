@@ -11,6 +11,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 
 import java.io.BufferedReader;
+import java.io.StringReader;
 
 public class CnDomXmlParser {
     //private String xmlText = "";
@@ -20,13 +21,12 @@ public class CnDomXmlParser {
         //this.xmlText = this.getStrFromFile(xmlPath);
         this.fqe = new FQXmlElement();
 
-        this.parseXmlData(xmlPath);
+        this.parseXmlDataFromFile(xmlPath);
     }
 
     /**
-     * @deprecated
      * @param pathArg
-     * @return
+     * @return String containing all XML data
      * @throws java.io.IOException
      */
     private String getStrFromFile(String pathArg) throws java.io.IOException {
@@ -44,21 +44,23 @@ public class CnDomXmlParser {
         return sb.toString();
     }
 
-    private void parseXmlData(String xmlPath) throws Exception {
-        /*
+    private void parseXmlDataFromBuffer(String xmlData) throws Exception {
         // this does not works... try trimming the string to get rid of extraneous stuff after last XML element
         DocumentBuilderFactory dbFact =      DocumentBuilderFactory.newInstance();
         DocumentBuilder        builder =     dbFact.newDocumentBuilder();
         StringReader           sr =      new StringReader(xmlData);
         InputSource            is =      new InputSource(sr);
         Document               doc =         builder.parse(is);
-        */
+
+        this.recursiveParseXmlDataNode(doc, 0);
+    }
+
+    private void parseXmlDataFromFile(String xmlPath) throws Exception {
         File fXmlFile =        new File(xmlPath);
         DocumentBuilderFactory     dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder            dbBuilder = dbFactory.newDocumentBuilder();
         Document                   doc =       dbBuilder.parse(fXmlFile);
 
-        this.recursiveParseXmlDataNode(doc, 0);
     }
 
     private void recursiveParseXmlDataNode(Node node, int level) {
