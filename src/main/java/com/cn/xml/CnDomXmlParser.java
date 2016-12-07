@@ -1,8 +1,7 @@
 package com.cn.xml;
 
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
-import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.xml.sax.InputSource;
@@ -14,18 +13,22 @@ import org.w3c.dom.NamedNodeMap;
 import java.io.BufferedReader;
 
 public class CnDomXmlParser {
-    private String xmlText = "";
+    //private String xmlText = "";
     private FQXmlElement fqe = null;
 
     public CnDomXmlParser(String xmlPath) throws Exception {
-        this.xmlText = this.getStrFromFile(xmlPath);
+        //this.xmlText = this.getStrFromFile(xmlPath);
         this.fqe = new FQXmlElement();
 
-        System.out.println(">>>" + this.xmlText + "<<<");
-
-        this.parseXmlData(this.xmlText);
+        this.parseXmlData(xmlPath);
     }
 
+    /**
+     * @deprecated
+     * @param pathArg
+     * @return
+     * @throws java.io.IOException
+     */
     private String getStrFromFile(String pathArg) throws java.io.IOException {
         final int BufSz = 4096;
         StringBuilder sb = new StringBuilder(BufSz);
@@ -41,14 +44,19 @@ public class CnDomXmlParser {
         return sb.toString();
     }
 
-    private void parseXmlData(String xmlData) throws Exception {
+    private void parseXmlData(String xmlPath) throws Exception {
+        /*
+        // this does not works... try trimming the string to get rid of extraneous stuff after last XML element
         DocumentBuilderFactory dbFact =      DocumentBuilderFactory.newInstance();
         DocumentBuilder        builder =     dbFact.newDocumentBuilder();
-
         StringReader           sr =      new StringReader(xmlData);
         InputSource            is =      new InputSource(sr);
-
         Document               doc =         builder.parse(is);
+        */
+        File fXmlFile =        new File(xmlPath);
+        DocumentBuilderFactory     dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder            dbBuilder = dbFactory.newDocumentBuilder();
+        Document                   doc =       dbBuilder.parse(fXmlFile);
 
         this.recursiveParseXmlDataNode(doc, 0);
     }
