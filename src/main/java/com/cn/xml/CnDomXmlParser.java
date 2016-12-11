@@ -1,7 +1,6 @@
 package com.cn.xml;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.xml.sax.InputSource;
@@ -9,13 +8,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
-
-import java.io.BufferedReader;
-import java.io.StringReader;
+import org.w3c.dom.Node.*;
 
 public class CnDomXmlParser {
     //private String xmlText = "";
     private FQXmlElement fqe = null;
+    private final PrintStream SO = System.out;
 
     public CnDomXmlParser(String xmlPath) throws Exception {
         //this.xmlText = this.getStrFromFile(xmlPath);
@@ -45,7 +43,7 @@ public class CnDomXmlParser {
     }
 
     private void parseXmlDataFromBuffer(String xmlData) throws Exception {
-        // this does not works... try trimming the string to get rid of extraneous stuff after last XML element
+        // this does not works... try trimming the string to get rid of extraneous stuff after last XML tag
         DocumentBuilderFactory dbFact =      DocumentBuilderFactory.newInstance();
         DocumentBuilder        builder =     dbFact.newDocumentBuilder();
         StringReader           sr =      new StringReader(xmlData);
@@ -61,10 +59,75 @@ public class CnDomXmlParser {
         DocumentBuilder            dbBuilder = dbFactory.newDocumentBuilder();
         Document                   doc =       dbBuilder.parse(fXmlFile);
 
+        this.recursiveParseXmlDataNode(doc, 0);
+
     }
 
     private void recursiveParseXmlDataNode(Node node, int level) {
+        System.out.println(node.toString());
 
+        NodeList nl = node.getChildNodes();
+        String   nName = node.getNodeName();
+        short    nType = node.getNodeType();
+
+        if (true) {
+            String nTypeStr = this.getNodeTypeString(nType);
+            SO.println();
+            SO.println("level:       " + level);
+            SO.println("NodeTypeStr: " + nTypeStr);
+            SO.println("NodeName:    " + nName);
+            SO.println("==========================");
+            SO.println("");
+        }
+
+        //if (nType == org.w3.doc.Node.TEXT_NODE) {
+        if (nType == Node.TEXT_NODE) {
+            String indentStr = this.xmlIndent(2, level);
+            String nText = node.getTextContent();
+            String trText = nText.trim();
+            SO.println(indentStr + "TEXT");
+            SO.println(indentStr + "  " + ">>>" + trText + "<<<");
+        }
+        if (nType == Node.ELEMENT_NODE) {
+            fqe.push(nName);
+            String indentStr = xmlIndent(2, level);
+            String fqn = fqe.getString();
+            SO.println(indentStr + "  " + fqe.getString());
+        }
+
+
+        //
+        // iterate on all children
+        //
+        int childCount = nl.getLength();
+        for (int i = 0; i < childCount; i++) {
+            recursiveParseXmlDataNode(nl.item(i), level+1);
+        }
+
+        int ii = 7;
+
+    }
+
+    /**
+     * indentation string for XML debugging
+     * @param spl spaces per level of indentation
+     * @param level indentation level
+     * @return String to use for indentation
+     */
+    private String xmlIndent(int spl, int level) {
+        int  total = spl * level;
+        if (total < 0) {
+            total = 0;
+        }
+        else if (total > 100) {
+            total = 100;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < total; i++) {
+            sb.append(" ");
+        }
+
+        return sb.toString();
     }
 
 
