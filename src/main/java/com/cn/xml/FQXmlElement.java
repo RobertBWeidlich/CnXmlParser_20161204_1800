@@ -80,4 +80,12 @@ public class FQXmlElement {
 
         return sb.toString();
     }
+
+    /**
+     *
+     * @return number of elements in name
+     */
+    int size() {
+        return this.stack.size();
+    }
 }

@@ -64,7 +64,8 @@ public class CnDomXmlParser {
     }
 
     private void recursiveParseXmlDataNode(Node node, int level) {
-        System.out.println(node.toString());
+        String indentStr = this.xmlIndent(2, level);
+        //SO.println("AAA " + node.toString());
 
         NodeList nl = node.getChildNodes();
         String   nName = node.getNodeName();
@@ -73,26 +74,47 @@ public class CnDomXmlParser {
         if (true) {
             String nTypeStr = this.getNodeTypeString(nType);
             SO.println();
-            SO.println("level:       " + level);
-            SO.println("NodeTypeStr: " + nTypeStr);
-            SO.println("NodeName:    " + nName);
-            SO.println("==========================");
-            SO.println("");
+            SO.println("RPXD ==========================");
+            SO.println("RPXD sz:          " + fqe.size());
+            SO.println("RPXD level:       " + level);
+            SO.println("RPXD NodeTypeStr: " + nTypeStr);
+            SO.println("RPXD NodeName:    " + nName);
+            SO.println("RPXD fqe:         " + fqe.getString());
+            SO.println("RPXD ");
         }
+        if (fqe.size() >= level)
+            fqe.pop();
 
         //if (nType == org.w3.doc.Node.TEXT_NODE) {
         if (nType == Node.TEXT_NODE) {
-            String indentStr = this.xmlIndent(2, level);
             String nText = node.getTextContent();
             String trText = nText.trim();
-            SO.println(indentStr + "TEXT");
+            SO.println(indentStr + "TEXT_NODE");
+            SO.println(indentStr + "  sz:" + fqe.size());
             SO.println(indentStr + "  " + ">>>" + trText + "<<<");
         }
         if (nType == Node.ELEMENT_NODE) {
             fqe.push(nName);
-            String indentStr = xmlIndent(2, level);
             String fqn = fqe.getString();
-            SO.println(indentStr + "  " + fqe.getString());
+            SO.println(indentStr + "ELEMENT_NODE + ATTRIBUTES");
+            SO.println(indentStr + "  fqe sz: " + fqe.size());
+            SO.println(indentStr + "  fqe:    " + fqe.getString());
+
+            SO.println(indentStr + "ATTRIBUTES");
+            NamedNodeMap nnm = node.getAttributes();
+            if (nnm == null) {
+                SO.println(indentStr + "  [none]");
+            }
+            else {
+                int mapSz = nnm.getLength();
+                for (int mi = 0; mi < mapSz; mi++) {
+                    Node n = nnm.item(mi);
+                    String name = n.getNodeName();
+                    String value = n.getNodeValue();
+                    SO.println(indentStr + "  " + name + "=\"" + value + "\"");
+                }
+            }
+
         }
 
 
